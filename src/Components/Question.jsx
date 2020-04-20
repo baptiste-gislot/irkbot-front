@@ -1,9 +1,12 @@
 import React from "react";
 
-const Question = () => {
+const Question = (props) => {
   return (
     <React.Fragment>
-      <h1>Question</h1>
+      <p>{props.question.id}</p>
+      <p>{props.question.topic}</p>
+      <p>{props.question.question}</p>
+      <p>{props.question.answer}</p>
     </React.Fragment>
   );
 };
