@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Modal, Form } from "react-bootstrap";
 import Question from "./Question";
 
 const apiUrl = "http://127.0.0.1";
@@ -14,6 +14,14 @@ const Dashboard = () => {
   const [start, setStart] = useState(0);
   const [gap, setGap] = useState(15);
   const [questions, setQuestions] = useState([]);
+  const [show, setShow] = useState(false);
+  const [currentQ, setCurrentQ] = useState({});
+
+  const handleClose = () => setShow(false);
+  const handleShow = (question) => {
+    setCurrentQ(question);
+    setShow(true);
+  };
 
   const getData = (pagination) => {
     axios
@@ -22,8 +30,35 @@ const Dashboard = () => {
         if (err) {
           console.log(err);
         }
+        console.log("test");
         setQuestions(res.data);
       });
+  };
+
+  const deleteQ = async (id) => {
+    console.log(id);
+    await axios
+      .delete(`http://127.0.0.1:8000/questions/${id}`)
+      .then((res, err) => {
+        if (err) {
+          throw err;
+        }
+        console.log(res);
+      });
+    getData(start);
+  };
+
+  const handleChange = (e) => {
+    switch (e.target.id) {
+      case "topic":
+        const topic = { topic: e.target.value };
+        setCurrentQ(...currentQ, topic);
+        break;
+      case "question":
+        break;
+      default:
+        break;
+    }
   };
 
   const handlePrevious = () => {
@@ -63,8 +98,9 @@ const Dashboard = () => {
               <Question
                 question={question}
                 key={index}
-                index={index}
-                setData={() => setQuestions()}
+                index={question.id}
+                deleteQ={deleteQ}
+                showQ={handleShow}
               />
             );
           })}
@@ -78,6 +114,33 @@ const Dashboard = () => {
           Next
         </Button>
       </div>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Question # {currentQ.id}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="topic">
+              <Form.Label>Topic</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="question topic"
+                value={currentQ.topic}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </React.Fragment>
   );
 };
