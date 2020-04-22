@@ -10,11 +10,23 @@ const buttonStyle = {
   margin: "5px",
 };
 
+const addBtn = {
+  width: "50px",
+  height: "50px",
+  borderRadius: "35px",
+  fontSize: "12px",
+  textAlign: "center",
+  position: "absolute",
+  right: "50px",
+  marginBottom: "20px",
+};
+
 const Dashboard = () => {
   const [start, setStart] = useState(0);
   const [gap, setGap] = useState(15);
   const [questions, setQuestions] = useState([]);
   const [show, setShow] = useState(false);
+  const [showSave, setShowSave] = useState(false);
   const [currentQ, setCurrentQ] = useState({});
 
   const getData = (pagination) => {
@@ -29,7 +41,7 @@ const Dashboard = () => {
   };
 
   const handleClose = () => setShow(false);
-  const handleSave = async () => {
+  const handleEdit = async () => {
     await axios
       .patch(`${apiUrl}:${apiPort}/questions/${currentQ.id}`, {
         topic: currentQ.topic,
@@ -37,9 +49,7 @@ const Dashboard = () => {
         answer: currentQ.answer,
       })
       .then((res, err) => {
-        if (err) {
-          throw err;
-        }
+        if (err) throw err;
         console.log(res);
       });
     setShow(false);
@@ -53,12 +63,25 @@ const Dashboard = () => {
     await axios
       .delete(`http://127.0.0.1:8000/questions/${id}`)
       .then((res, err) => {
-        if (err) {
-          throw err;
-        }
+        if (err) throw err;
         console.log(res);
       });
     getData(start);
+  };
+  const handleCloseSave = () => setShowSave(false);
+  const handleShowSave = () => setShowSave(true);
+  const handleSave = async () => {
+    await axios
+      .post(`${apiUrl}:${apiPort}/questions`, {
+        topic: currentQ.topic,
+        question: currentQ.question,
+        answer: currentQ.answer,
+      })
+      .then((res, err) => {
+        if (err) throw err;
+        console.log(res);
+      });
+    setShowSave(false);
   };
 
   const handleChange = (e) => {
@@ -132,6 +155,9 @@ const Dashboard = () => {
         <Button variant="primary" style={buttonStyle} onClick={handleNext}>
           Next
         </Button>
+        <Button variant="primary" style={addBtn} onClick={handleShowSave}>
+          Add
+        </Button>
       </div>
 
       <Modal show={show} onHide={handleClose}>
@@ -171,6 +197,51 @@ const Dashboard = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleEdit}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showSave} onHide={handleCloseSave}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add a question to the DB</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="topic">
+              <Form.Label>Topic</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="topic"
+                value={currentQ.topic}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="question">
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="question"
+                value={currentQ.question}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="answer">
+              <Form.Label>Answer</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="answer"
+                value={currentQ.answer}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseSave}>
             Close
           </Button>
           <Button variant="primary" onClick={handleSave}>
