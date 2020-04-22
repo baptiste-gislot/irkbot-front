@@ -17,6 +17,17 @@ const Dashboard = () => {
   const [show, setShow] = useState(false);
   const [currentQ, setCurrentQ] = useState({});
 
+  const getData = (pagination) => {
+    axios
+      .get(`${apiUrl}:${apiPort}/questions?start=${pagination}&gap=${gap}`)
+      .then((res, err) => {
+        if (err) {
+          console.log(err);
+        }
+        setQuestions(res.data);
+      });
+  };
+
   const handleClose = () => setShow(false);
   const handleSave = async () => {
     await axios
@@ -31,25 +42,13 @@ const Dashboard = () => {
         }
         console.log(res);
       });
-    getData(start);
     setShow(false);
+    getData(start);
   };
   const handleShow = (question) => {
     setCurrentQ(question);
     setShow(true);
   };
-
-  const getData = (pagination) => {
-    axios
-      .get(`${apiUrl}:${apiPort}/questions?start=${pagination}&gap=${gap}`)
-      .then((res, err) => {
-        if (err) {
-          console.log(err);
-        }
-        setQuestions(res.data);
-      });
-  };
-
   const deleteQ = async (id) => {
     await axios
       .delete(`http://127.0.0.1:8000/questions/${id}`)
