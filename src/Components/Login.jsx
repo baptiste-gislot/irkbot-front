@@ -18,7 +18,7 @@ const Login = (props) => {
   const submit = async () => {
     if (login && password) {
       await axios
-        .post(`http://127.0.0.1:8000/login`, {
+        .post(`http://127.0.0.1:3000/login`, {
           username: login,
           password: password,
         })

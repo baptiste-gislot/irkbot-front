@@ -4,7 +4,7 @@ import { Table, Button, Modal, Form } from "react-bootstrap";
 import Question from "./Question";
 
 const apiUrl = "http://127.0.0.1";
-const apiPort = "8000";
+const apiPort = "3000";
 
 const buttonStyle = {
   margin: "5px",
@@ -73,7 +73,7 @@ const Dashboard = () => {
   };
   const deleteQ = async (id) => {
     await axios
-      .delete(`http://127.0.0.1:8000/questions/${id}`, {
+      .delete(`${apiUrl}:${apiPort}/questions/${id}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
