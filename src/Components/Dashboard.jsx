@@ -31,7 +31,11 @@ const Dashboard = () => {
 
   const getData = (pagination) => {
     axios
-      .get(`${apiUrl}:${apiPort}/questions?start=${pagination}&gap=${gap}`)
+      .get(`${apiUrl}:${apiPort}/questions?start=${pagination}&gap=${gap}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
       .then((res, err) => {
         if (err) {
           console.log(err);
@@ -43,11 +47,19 @@ const Dashboard = () => {
   const handleClose = () => setShow(false);
   const handleEdit = async () => {
     await axios
-      .patch(`${apiUrl}:${apiPort}/questions/${currentQ.id}`, {
-        topic: currentQ.topic,
-        question: currentQ.question,
-        answer: currentQ.answer,
-      })
+      .patch(
+        `${apiUrl}:${apiPort}/questions/${currentQ.id}`,
+        {
+          topic: currentQ.topic,
+          question: currentQ.question,
+          answer: currentQ.answer,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then((res, err) => {
         if (err) throw err;
         console.log(res);
@@ -61,7 +73,11 @@ const Dashboard = () => {
   };
   const deleteQ = async (id) => {
     await axios
-      .delete(`http://127.0.0.1:8000/questions/${id}`)
+      .delete(`http://127.0.0.1:8000/questions/${id}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
       .then((res, err) => {
         if (err) throw err;
         console.log(res);
@@ -72,11 +88,19 @@ const Dashboard = () => {
   const handleShowSave = () => setShowSave(true);
   const handleSave = async () => {
     await axios
-      .post(`${apiUrl}:${apiPort}/questions`, {
-        topic: currentQ.topic,
-        question: currentQ.question,
-        answer: currentQ.answer,
-      })
+      .post(
+        `${apiUrl}:${apiPort}/questions`,
+        {
+          topic: currentQ.topic,
+          question: currentQ.question,
+          answer: currentQ.answer,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then((res, err) => {
         if (err) throw err;
         console.log(res);
@@ -123,7 +147,7 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <h1>Dashboard</h1>
+      <h1>IrkBot's Question Manager</h1>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -178,7 +202,7 @@ const Dashboard = () => {
             <Form.Group controlId="question">
               <Form.Label>Question</Form.Label>
               <Form.Control
-                type="text"
+                as="textarea"
                 placeholder="question"
                 value={currentQ.question}
                 onChange={handleChange}

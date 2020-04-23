@@ -14,7 +14,7 @@ function App() {
       axios
         .get("http://127.0.0.1:8000/login", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         })
         .then((res, err) => {
