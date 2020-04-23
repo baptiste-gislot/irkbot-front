@@ -1,8 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import axios from "axios";
 import "./Login.css";
 
-const Login = () => {
+const Login = (props) => {
+  const [login, setLogin] = useState();
+  const [password, setPassword] = useState();
+
+  const handleChange = (e) => {
+    if (e.target.id === "login") {
+      setLogin(e.target.value);
+    } else {
+      setPassword(e.target.value);
+    }
+  };
+
+  const submit = async () => {
+    if (login && password) {
+      await axios
+        .post(`http://127.0.0.1:8000/login`, {
+          username: login,
+          password: password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", res.data);
+          props.isLogged(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="wrapper fadeInDown" id="form">
@@ -17,17 +46,28 @@ const Login = () => {
           <Form>
             <Form.Group controlId="login" className="fadeIn second">
               <Form.Label> Login or mail </Form.Label>
-              <Form.Control type="text" placeholder="Enter login" />
+              <Form.Control
+                type="text"
+                placeholder="Enter login"
+                value={login}
+                onChange={handleChange}
+              />
             </Form.Group>
             <Form.Group controlId="password" className="fadeIn third">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="text" placeholder="Enter password" />
+              <Form.Control
+                type="text"
+                placeholder="Enter password"
+                value={password}
+                onChange={handleChange}
+              />
             </Form.Group>
             <Button
               variant="primary"
               className="btn btn-primary fadeIn fourth"
               id="submit"
               type="button"
+              onClick={submit}
             >
               Login
             </Button>
