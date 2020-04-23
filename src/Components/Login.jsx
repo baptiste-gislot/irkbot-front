@@ -6,6 +6,8 @@ import "./Login.css";
 const Login = (props) => {
   const [login, setLogin] = useState();
   const [password, setPassword] = useState();
+  const [emptyErr, setEmptyErr] = useState(false);
+  const [logErr, setLogErr] = useState(false);
 
   const handleChange = (e) => {
     if (e.target.id === "login") {
@@ -28,7 +30,10 @@ const Login = (props) => {
         })
         .catch((err) => {
           console.log(err);
+          setLogErr(true);
         });
+    } else {
+      setEmptyErr(true);
     }
   };
 
@@ -73,6 +78,12 @@ const Login = (props) => {
             </Button>
           </Form>
         </div>
+        <h4 style={{ color: "red" }}>
+          {emptyErr ? "Login and password should be filled" : null}
+        </h4>
+        <h4 style={{ color: "red" }}>
+          {logErr ? "Login and password don't match" : null}
+        </h4>
       </div>
     </React.Fragment>
   );
